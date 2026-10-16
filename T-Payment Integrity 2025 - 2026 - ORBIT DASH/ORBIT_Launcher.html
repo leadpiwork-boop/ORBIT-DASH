@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PROJECT ORBIT — Launch</title>
+
+  <!-- Auto-redirect to the live canonical URL after 4 seconds -->
+  <!-- Users who bookmarked this launcher are still sent to the correct location -->
+  <meta http-equiv="refresh" content="4; url=https://mysite.wellpoint.com/personal/al70683_ad_wellpoint_com/Documents/IGNITE%20PROJECTS/ORBIT/ORBIT%20DASH/ORBIT.html?web=1" />
+
+  <style>
+    /* ── ORBIT design tokens ── */
+    :root {
+      --purple-primary: #5009B5;
+      --purple-light:   #794CFF;
+      --purple-dark:    #2B1B49;
+      --purple-pale:    #EBE4FF;
+      --cyan:           #44B8F3;
+      --cyan-pale:      #E1EDFF;
+      --turquoise:      #00BBBA;
+      --gray-light:     #F5F5F5;
+      --gray-dark:      #231E33;
+      --white:          #FFFFFF;
+      --red:            #FA8072;
+      --text-muted:     #5A5470;
+      --shadow-lg:      0 8px 36px rgba(43,27,73,0.13);
+      --radius-lg:      18px;
+      --font:           'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font);
+      background: var(--gray-light);
+      color: var(--gray-dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      padding: 48px 52px;
+      max-width: 680px;
+      width: 100%;
+      text-align: center;
+    }
+
+    /* ── Logo ── */
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+    .logo-symbol {
+      width: 52px;
+      height: 52px;
+      flex-shrink: 0;
+    }
+    .logo-text {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--purple-primary);
+      text-transform: uppercase;
+      line-height: 1.3;
+      text-align: left;
+    }
+    .logo-text span {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      text-transform: none;
+    }
+
+    /* ── Redirect bar ── */
+    .redirect-bar {
+      background: var(--purple-pale);
+      border-radius: 8px;
+      padding: 14px 20px;
+      margin: 28px 0 24px;
+      font-size: 0.92rem;
+      color: var(--purple-dark);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .redirect-bar .spinner {
+      width: 18px; height: 18px;
+      border: 2.5px solid var(--purple-light);
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── CTA button ── */
+    .btn-launch {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--purple-primary);
+      color: var(--white);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 14px 32px;
+      border-radius: 10px;
+      transition: background 0.2s, transform 0.15s;
+      margin-bottom: 32px;
+    }
+    .btn-launch:hover {
+      background: var(--purple-dark);
+      transform: translateY(-1px);
+    }
+    .btn-launch svg { width: 18px; height: 18px; }
+
+    /* ── URL display ── */
+    .url-block {
+      background: var(--gray-light);
+      border: 1px solid var(--cyan-pale);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      word-break: break-all;
+      text-align: left;
+      margin-bottom: 32px;
+      font-family: 'Cascadia Code', 'Consolas', monospace;
+    }
+    .url-block strong {
+      display: block;
+      font-family: var(--font);
+      font-size: 0.72rem;
+      color: var(--purple-primary);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* ── Rules section ── */
+    .rules {
+      border-top: 1px solid var(--cyan-pale);
+      padding-top: 24px;
+      text-align: left;
+    }
+    .rules h2 {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+    .rule-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--gray-light);
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+    .rule-item:last-child { border-bottom: none; }
+    .rule-icon {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .rule-icon.no  { background: #FFE8E5; color: #C0392B; }
+    .rule-icon.yes { background: #E6FBF8; color: #00796B; }
+    .rule-body strong { display: block; margin-bottom: 2px; }
+    .rule-body .sub { color: var(--text-muted); font-size: 0.82rem; }
+
+    /* ── Footer ── */
+    footer {
+      margin-top: 28px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+
+  <!-- Logo -->
+  <div class="logo-wrap">
+    <!-- ORBIT symbol SVG (inline) -->
+    <svg class="logo-symbol" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+      <defs>
+        <linearGradient id="h-sphereGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#794CFF"/>
+          <stop offset="100%" stop-color="#5009B5"/>
+        </linearGradient>
+        <linearGradient id="h-ringGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#44B8F3"/>
+          <stop offset="100%" stop-color="#00BBBA"/>
+        </linearGradient>
+        <linearGradient id="h-tealArc" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#00BBBA" stop-opacity="0.9"/>
+          <stop offset="100%" stop-color="#44B8F3" stop-opacity="0.4"/>
+        </linearGradient>
+        <radialGradient id="h-orbitGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#EBE4FF"/>
+          <stop offset="100%" stop-color="#E1EDFF"/>
+        </radialGradient>
+      </defs>
+      <circle cx="100" cy="100" r="96" fill="url(#h-orbitGrad)" opacity="0.5"/>
+      <circle cx="100" cy="100" r="34" fill="url(#h-sphereGrad)"/>
+      <ellipse cx="100" cy="100" rx="80" ry="28" stroke="url(#h-ringGrad)" stroke-width="5" fill="none" opacity="0.9"/>
+      <ellipse cx="100" cy="100" rx="80" ry="28" stroke="url(#h-ringGrad)" stroke-width="5" fill="none" opacity="0.9"
+               transform="rotate(60,100,100)"/>
+      <ellipse cx="100" cy="100" rx="80" ry="28" stroke="url(#h-tealArc)" stroke-width="3.5" fill="none" opacity="0.7"
+               transform="rotate(-60,100,100)"/>
+    </svg>
+    <div class="logo-text">
+      Project ORBIT
+      <span>Operational Results &amp; Business Intelligence Tracker</span>
+    </div>
+  </div>
+
+  <!-- Redirect notice -->
+  <div class="redirect-bar">
+    <div class="spinner"></div>
+    <span>Redirecting you to the live ORBIT dashboard&hellip; (4 seconds)</span>
+  </div>
+
+  <!-- Manual launch button -->
+  <a class="btn-launch"
+     href="https://mysite.wellpoint.com/personal/al70683_ad_wellpoint_com/Documents/IGNITE%20PROJECTS/ORBIT/ORBIT%20DASH/ORBIT.html?web=1"
+     target="_top">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <polyline points="12 8 16 12 12 16"/>
+      <line x1="8" y1="12" x2="16" y2="12"/>
+    </svg>
+    Open ORBIT Now
+  </a>
+
+  <!-- Canonical URL display -->
+  <div class="url-block">
+    <strong>Canonical URL — bookmark this, share this</strong>
+    https://mysite.wellpoint.com/personal/al70683_ad_wellpoint_com/Documents/IGNITE%20PROJECTS/ORBIT/ORBIT%20DASH/ORBIT.html?web=1
+  </div>
+
+  <!-- Access rules -->
+  <div class="rules">
+    <h2>Access Policy</h2>
+
+    <div class="rule-item">
+      <div class="rule-icon no">✕</div>
+      <div class="rule-body">
+        <strong>Do not download or save a local copy</strong>
+        <span class="sub">Downloaded files contain a frozen snapshot of orbit-data.js. They will never update and you will see stale data.</span>
+      </div>
+    </div>
+
+    <div class="rule-item">
+      <div class="rule-icon no">✕</div>
+      <div class="rule-body">
+        <strong>Do not open ORBIT.html from your Downloads or Desktop folder</strong>
+        <span class="sub">A local file path (C:\Users\...) is not the live application. Data does not refresh from a local copy.</span>
+      </div>
+    </div>
+
+    <div class="rule-item">
+      <div class="rule-icon no">✕</div>
+      <div class="rule-body">
+        <strong>Do not share a ZIP file or email attachments of ORBIT files</strong>
+        <span class="sub">Recipients will receive a stale, disconnected copy that cannot be updated remotely.</span>
+      </div>
+    </div>
+
+    <div class="rule-item">
+      <div class="rule-icon yes">✓</div>
+      <div class="rule-body">
+        <strong>Always open ORBIT from the canonical SharePoint URL above</strong>
+        <span class="sub">The ORBIT admin runs one refresh and all users see updated data immediately on their next page reload.</span>
+      </div>
+    </div>
+
+    <div class="rule-item">
+      <div class="rule-icon yes">✓</div>
+      <div class="rule-body">
+        <strong>Bookmark the canonical URL — not a local file path</strong>
+        <span class="sub">Right-click the address bar when viewing live ORBIT and select "Add to favorites" or "Bookmark this tab".</span>
+      </div>
+    </div>
+
+  </div><!-- /rules -->
+
+</div><!-- /card -->
+
+<footer>
+  PROJECT ORBIT &mdash; Elevance Health &nbsp;|&nbsp; Data refreshed by ORBIT Admin &nbsp;|&nbsp;
+  If redirected to a download instead of a web page, use the <strong>Open ORBIT Now</strong> button above.
+</footer>
+
+</body>
+</html>

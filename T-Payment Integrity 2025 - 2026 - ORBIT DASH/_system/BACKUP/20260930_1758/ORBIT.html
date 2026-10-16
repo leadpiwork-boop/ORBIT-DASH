@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PROJECT ORBIT — Operational Results &amp; Business Intelligence Tracker</title>
+  <meta name="description" content="PROJECT ORBIT — Operational Results &amp; Business Intelligence Tracker. Real-time productivity and quality metrics." />
+  <link rel="stylesheet" href="orbit.css" />
+
+  <!-- Chart.js 4.4.3 — local copy, no internet required -->
+  <script src="chart.umd.min.js"></script>
+</head>
+<body>
+<div class="orbit-shell">
+
+  <!-- ── Loading overlay ─────────────────────────────────── -->
+  <div class="orbit-loading" id="orbit-loading" role="status" aria-live="polite">
+    <div class="orbit-spinner"></div>
+    <div class="orbit-loading__text">Loading ORBIT&hellip;</div>
+  </div>
+
+  <!-- ── Header ───────────────────────────────────────────── -->
+  <header class="orbit-header" role="banner">
+    <div class="orbit-header__left">
+
+      <!-- ORBIT Symbol SVG — inline for crisp rendering at any DPI -->
+      <div class="orbit-header__logo" aria-label="ORBIT logo" role="img">
+        <svg class="orbit-header__svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="h-ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%"   stop-color="#5C00BD"/>
+              <stop offset="50%"  stop-color="#8271FA"/>
+              <stop offset="100%" stop-color="#44B8F3"/>
+            </linearGradient>
+            <linearGradient id="h-orbitGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+              <stop offset="0%"   stop-color="#44B8F3"/>
+              <stop offset="50%"  stop-color="#8271FA"/>
+              <stop offset="100%" stop-color="#5C00BD"/>
+            </linearGradient>
+            <radialGradient id="h-sphereGrad" cx="38%" cy="32%" r="62%">
+              <stop offset="0%"   stop-color="#9B6EF5"/>
+              <stop offset="45%"  stop-color="#6A1FD4"/>
+              <stop offset="100%" stop-color="#3A0080"/>
+            </radialGradient>
+            <linearGradient id="h-barGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%"   stop-color="#00BCBB"/>
+              <stop offset="100%" stop-color="#44B8F3"/>
+            </linearGradient>
+            <linearGradient id="h-tealArc" x1="0%" y1="100%" x2="100%" y2="0%">
+              <stop offset="0%"   stop-color="#44B8F3"/>
+              <stop offset="100%" stop-color="#00BCBB"/>
+            </linearGradient>
+          </defs>
+
+          <!-- Outer main ring -->
+          <path d="M 100 8 A 92 92 0 1 1 30 162"
+                stroke="url(#h-ringGrad)" stroke-width="13" stroke-linecap="round" fill="none" opacity="0.92"/>
+          <!-- Teal lower arc -->
+          <path d="M 30 162 A 92 92 0 0 0 172 155"
+                stroke="url(#h-tealArc)" stroke-width="13" stroke-linecap="round" fill="none" opacity="0.95"/>
+          <!-- Dashed cyan inner speedometer arc -->
+          <path d="M 100 22 A 78 78 0 0 1 168 130"
+                stroke="#44B8F3" stroke-width="5" stroke-linecap="round"
+                stroke-dasharray="9 7" fill="none" opacity="0.85"/>
+          <!-- Dashed purple lower arc -->
+          <path d="M 35 148 A 78 78 0 0 1 100 22"
+                stroke="#8271FA" stroke-width="4" stroke-linecap="round"
+                stroke-dasharray="7 9" fill="none" opacity="0.55"/>
+          <!-- Orbital ring ellipse (diagonal sweep) -->
+          <ellipse cx="100" cy="108" rx="80" ry="22"
+                   transform="rotate(-30 100 108)"
+                   stroke="url(#h-orbitGrad)" stroke-width="5" fill="none" opacity="0.88"/>
+          <!-- Planet sphere -->
+          <circle cx="100" cy="100" r="30" fill="url(#h-sphereGrad)"/>
+          <ellipse cx="91" cy="89" rx="9" ry="6"
+                   fill="white" opacity="0.18" transform="rotate(-20 91 89)"/>
+          <!-- Orbital node dot -->
+          <circle cx="158" cy="80" r="8" fill="#5C00BD"/>
+          <circle cx="158" cy="80" r="5" fill="#8271FA"/>
+          <circle cx="156" cy="78" r="2" fill="white" opacity="0.5"/>
+          <!-- Analytics bar chart -->
+          <rect x="108" y="148" width="9"  height="18" rx="2" fill="url(#h-barGrad)" opacity="0.95"/>
+          <rect x="120" y="138" width="9"  height="28" rx="2" fill="url(#h-barGrad)" opacity="0.95"/>
+          <rect x="132" y="128" width="9"  height="38" rx="2" fill="url(#h-barGrad)" opacity="0.95"/>
+          <rect x="144" y="116" width="9"  height="50" rx="2" fill="url(#h-barGrad)" opacity="0.95"/>
+          <!-- Bar sheens -->
+          <rect x="108" y="148" width="4"  height="18" rx="2" fill="white" opacity="0.12"/>
+          <rect x="120" y="138" width="4"  height="28" rx="2" fill="white" opacity="0.12"/>
+          <rect x="132" y="128" width="4"  height="38" rx="2" fill="white" opacity="0.12"/>
+          <rect x="144" y="116" width="4"  height="50" rx="2" fill="white" opacity="0.12"/>
+        </svg>
+      </div>
+
+      <!-- Vertical divider -->
+      <div class="orbit-header__divider" aria-hidden="true"></div>
+
+      <!-- Text lockup -->
+      <div class="orbit-header__titles">
+        <div class="orbit-header__eyebrow">PROJECT</div>
+        <div class="orbit-header__title">ORBIT</div>
+        <div class="orbit-header__subtitle">Operational Results &amp; Business Intelligence Tracker</div>
+      </div>
+    </div>
+
+    <div class="orbit-header__right">
+
+      <!-- Carelon Global Solutions — official PNG asset, 88px -->
+      <div class="orbit-header__carelon" role="img" aria-label="Carelon Global Solutions">
+        <img src="assets/logos/carelon.png"
+             alt="Carelon Global Solutions"
+             class="orbit-header__carelon-img" />
+      </div>
+
+      <!-- Carelon label -->
+      <div class="orbit-header__carelon-label">Carelon Global Solutions</div>
+
+      <!-- Last refresh — small, subordinate timestamp -->
+      <div class="orbit-header__badge">
+        <span id="last-updated">Live</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Filters ──────────────────────────────────────────── -->
+  <nav class="orbit-filters" role="navigation" aria-label="Dashboard filters">
+
+    <!-- Timeline: Month pills -->
+    <div class="orbit-filters__group">
+      <span class="orbit-filters__label">Timeline</span>
+      <div class="orbit-filters__pills" id="month-pills" role="group" aria-label="Filter by month">
+        <!-- Built dynamically by orbit-app.js -->
+      </div>
+    </div>
+
+    <!-- Manager dropdown — sourced from Fact_Productivity (period-aware) -->
+    <div class="orbit-filters__group">
+      <span class="orbit-filters__label" data-tooltip="Manager as recorded in Fact_Productivity for the selected period">Manager</span>
+      <div class="orbit-filters__select-wrap">
+        <select class="orbit-select" id="manager-select" aria-label="Filter by manager">
+          <option value="all">All Managers</option>
+        </select>
+      </div>
+    </div>
+
+  </nav>
+
+  <!-- ── Page navigation tabs ─────────────────────────────── -->
+  <nav class="orbit-page-nav" role="tablist" aria-label="Dashboard pages">
+    <button class="orbit-page-tab is-active" role="tab" aria-selected="true"
+            aria-controls="page-overview" id="tab-overview" data-page="overview">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <rect x="1" y="8" width="4" height="7" rx="1" fill="currentColor" opacity=".7"/>
+        <rect x="6" y="4" width="4" height="11" rx="1" fill="currentColor"/>
+        <rect x="11" y="1" width="4" height="14" rx="1" fill="currentColor" opacity=".85"/>
+      </svg>
+      Overview
+    </button>
+    <button class="orbit-page-tab" role="tab" aria-selected="false"
+            aria-controls="page-daily" id="tab-daily" data-page="daily">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <rect x="1" y="1" width="14" height="2" rx="1" fill="currentColor" opacity=".5"/>
+        <rect x="1" y="5" width="14" height="2" rx="1" fill="currentColor" opacity=".75"/>
+        <rect x="1" y="9" width="10" height="2" rx="1" fill="currentColor"/>
+        <rect x="1" y="13" width="7"  height="2" rx="1" fill="currentColor" opacity=".6"/>
+      </svg>
+      Daily Detail
+    </button>
+    <button class="orbit-page-tab" role="tab" aria-selected="false"
+            aria-controls="page-monthly" id="tab-monthly" data-page="monthly">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <rect x="1" y="1" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.4" fill="none"/>
+        <rect x="4" y="4" width="3" height="3" rx=".5" fill="currentColor" opacity=".5"/>
+        <rect x="9" y="4" width="3" height="3" rx=".5" fill="currentColor" opacity=".85"/>
+        <rect x="4" y="9" width="3" height="3" rx=".5" fill="currentColor"/>
+        <rect x="9" y="9" width="3" height="3" rx=".5" fill="currentColor" opacity=".65"/>
+      </svg>
+      Monthly Performance
+    </button>
+  </nav>
+
+  <!-- ── Main content ─────────────────────────────────────── -->
+  <main class="orbit-content" role="main">
+
+  <!-- ══ PAGE: Overview ═══════════════════════════════════ -->
+  <div id="page-overview" class="orbit-page" role="tabpanel" aria-labelledby="tab-overview">
+
+    <!-- ── KPI Cards ──────────────────────────────────────── -->
+    <section class="orbit-kpis" aria-label="Key performance indicators">
+
+      <article class="kpi-card kpi-card--production" data-tt-title="Actual Production" data-tt-body="Total units produced in the selected period, aggregated across all filtered associates.">
+        <div class="kpi-label">Actual Production</div>
+        <div class="kpi-value" id="kpi-actual">—</div>
+        <div class="kpi-sub" id="kpi-actual-sub">Total output</div>
+      </article>
+
+      <article class="kpi-card kpi-card--target" data-tt-title="Production Target" data-tt-body="Sum of individual production targets for the selected period and filters.">
+        <div class="kpi-label">Production Target</div>
+        <div class="kpi-value" id="kpi-target">—</div>
+        <div class="kpi-sub" id="kpi-target-sub">Aggregate target</div>
+      </article>
+
+      <article class="kpi-card kpi-card--pct" data-tt-title="Productivity %" data-tt-body="Total actual production ÷ total target, blended across all filtered associates. PASS when ≥ 100%.">
+        <div class="kpi-label">Productivity %</div>
+        <div class="kpi-value" id="kpi-pct">—</div>
+        <div class="kpi-sub" id="kpi-pct-sub">vs target</div>
+      </article>
+
+      <article class="kpi-card kpi-card--ent-target" data-tt="ent">
+        <div class="kpi-label">Enterprise Target</div>
+        <div class="kpi-value" id="kpi-ent-target">—</div>
+        <div class="kpi-sub" id="kpi-ent-target-sub">Select a single month</div>
+      </article>
+
+      <article class="kpi-card kpi-card--ent-variance" data-tt="ent-var">
+        <div class="kpi-label">Enterprise Variance</div>
+        <div class="kpi-value" id="kpi-ent-variance">—</div>
+        <div class="kpi-sub" id="kpi-ent-variance-sub">Select a single month</div>
+      </article>
+
+      <article class="kpi-card kpi-card--qa-score" data-tt-title="Average QA Score" data-tt-body="Weighted average QA score across all audits. PI passing threshold: 98.50% — scores below are FAIL.">
+        <div class="kpi-label">Average QA Score</div>
+        <div class="kpi-value" id="kpi-qa-score">—</div>
+        <div class="kpi-sub" id="kpi-qa-score-sub">No audit data</div>
+      </article>
+
+      <article class="kpi-card kpi-card--qa-count" data-tt-title="QA Audit Count" data-tt-body="Total number of QA audit transactions in the selected period.">
+        <div class="kpi-label">QA Audit Count</div>
+        <div class="kpi-value" id="kpi-qa-count">—</div>
+        <div class="kpi-sub">Total transactions</div>
+      </article>
+
+      <article class="kpi-card kpi-card--audited" data-tt-title="Associates Audited" data-tt-body="Distinct associates who received at least one QA audit in the selected period.">
+        <div class="kpi-label">Associates Audited</div>
+        <div class="kpi-value" id="kpi-audited">—</div>
+        <div class="kpi-sub">Unique associates</div>
+      </article>
+
+    </section>
+
+    <!-- ── Charts ─────────────────────────────────────────── -->
+    <section class="orbit-charts" aria-label="Visual analytics">
+
+      <!-- Hero chart: Weekly Actual vs Target -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <div class="chart-header__left">
+            <div class="chart-title">Weekly Actual vs Target Trend</div>
+            <div class="chart-subtitle">Aggregated weekly production by all associates</div>
+          </div>
+          <span class="chart-period-badge" aria-live="polite">All Months · All Managers</span>
+        </div>
+        <div class="chart-body" role="img" aria-label="Line chart showing weekly actual production versus target">
+          <canvas id="chart-trend"></canvas>
+        </div>
+        <div class="chart-legend" aria-hidden="true">
+          <div class="chart-legend__item"><span class="chart-legend__dot chart-legend__dot--actual"></span>Actual Production</div>
+          <div class="chart-legend__item"><span class="chart-legend__dot chart-legend__dot--target"></span>Production Target</div>
+        </div>
+      </div>
+
+      <!-- Secondary chart: QA Overview -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <div class="chart-header__left">
+            <div class="chart-title">QA Overview</div>
+            <div class="chart-subtitle">Monthly audit count &amp; average score</div>
+          </div>
+          <span class="chart-period-badge" aria-live="polite">All Months · All Managers</span>
+        </div>
+        <div class="chart-body" role="img" aria-label="Bar and line chart showing QA audit counts and average scores by month">
+          <canvas id="chart-qa"></canvas>
+        </div>
+        <div class="chart-legend" aria-hidden="true">
+          <div class="chart-legend__item"><span class="chart-legend__dot chart-legend__dot--actual"></span>Audit Count</div>
+          <div class="chart-legend__item"><span class="chart-legend__dot chart-legend__dot--qa"></span>Avg Score %</div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ── Associate Detail Table ─────────────────────────── -->
+    <section class="orbit-table-section" aria-label="Associate detail table">
+      <div class="table-card">
+        <div class="table-card__header">
+          <div>
+            <div class="table-card__title">Associate Detail</div>
+            <div class="table-card__meta" id="table-meta">Loading&hellip;</div>
+          </div>
+          <div class="table-card__actions">
+            <input
+              id="table-search"
+              type="search"
+              placeholder="Search associate&hellip;"
+              aria-label="Search associates"
+              style="
+                background:var(--glass-bg);border:1px solid var(--glass-border);
+                border-radius:var(--radius-sm);color:var(--text);font-size:.73rem;
+                padding:5px 10px;outline:none;width:180px;
+              "
+            />
+            <button class="table-action-btn" onclick="window.print()" aria-label="Print table">
+              &#128438; Print
+            </button>
+          </div>
+        </div>
+        <div class="table-scroll-wrap" role="region" aria-label="Scrollable data table" tabindex="0">
+          <table class="orbit-table" aria-label="Associate productivity and quality data">
+            <thead>
+              <tr>
+                <th aria-label="Rank">#</th>
+                <th data-sort="name"     class="is-sortable">Associate</th>
+                <th data-sort="manager"  class="is-sortable" data-tooltip="Manager from Fact_Productivity — period-aware">Manager</th>
+                <th data-sort="act"      class="is-sortable" style="text-align:right">Prod Actual</th>
+                <th data-sort="tgt"      class="is-sortable" style="text-align:right">Prod Target</th>
+                <th data-sort="variance" class="is-sortable" style="text-align:right">Variance</th>
+                <th data-sort="prodPct"  class="is-sortable">Productivity %</th>
+                <th data-sort="qaCnt"    class="is-sortable" style="text-align:right">QA Audits</th>
+                <th data-sort="avgQA"    class="is-sortable" style="text-align:right">QA Score %</th>
+              </tr>
+            </thead>
+            <tbody id="assoc-tbody">
+              <tr><td colspan="9">
+                <div class="orbit-empty">
+                  <div class="orbit-empty__title">Loading data&hellip;</div>
+                </div>
+              </td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /.orbit-page#page-overview -->
+
+  <!-- ══ PAGE: Daily Detail ════════════════════════════════ -->
+  <div id="page-daily" class="orbit-page is-hidden" role="tabpanel" aria-labelledby="tab-daily">
+
+    <!-- Daily Detail filters -->
+    <div class="orbit-dd-filters">
+
+      <!-- Month pills (synced with Overview timeline) -->
+      <div class="orbit-filters__group">
+        <span class="orbit-filters__label">Timeline</span>
+        <div class="orbit-filters__pills" id="dd-month-pills" role="group" aria-label="Filter daily detail by month"></div>
+      </div>
+
+      <!-- Manager dropdown -->
+      <div class="orbit-filters__group">
+        <span class="orbit-filters__label">Manager</span>
+        <div class="orbit-filters__select-wrap">
+          <select class="orbit-select" id="dd-manager-select" aria-label="Filter by manager">
+            <option value="all">All Managers</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Associate dropdown -->
+      <div class="orbit-filters__group">
+        <span class="orbit-filters__label">Associate</span>
+        <div class="orbit-filters__select-wrap">
+          <select class="orbit-select" id="dd-assoc-select" aria-label="Filter by associate">
+            <option value="all">All Associates</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Search box -->
+      <div class="orbit-filters__group orbit-filters__group--search">
+        <span class="orbit-filters__label">Search</span>
+        <div class="orbit-filters__select-wrap">
+          <input class="orbit-select orbit-dd-search" id="dd-search"
+                 type="search" placeholder="Search associate, manager…"
+                 aria-label="Search daily detail table" autocomplete="off" />
+        </div>
+      </div>
+
+    </div><!-- /.orbit-dd-filters -->
+
+    <!-- Daily Detail table card -->
+    <div class="table-card orbit-dd-card">
+      <div class="table-card__header">
+        <div class="table-card__title">Daily Detail</div>
+        <div class="table-card__meta" id="dd-meta">Loading&hellip;</div>
+        <div class="table-card__actions">
+          <button class="orbit-btn orbit-btn--ghost" id="dd-export-btn"
+                  title="Export to CSV" aria-label="Export daily detail to CSV">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M8 1v9M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M2 12h12v2a1 1 0 01-1 1H3a1 1 0 01-1-1v-2z" fill="currentColor" opacity=".35"/>
+            </svg>
+            Export CSV
+          </button>
+        </div>
+      </div>
+      <div class="table-card__body">
+        <table class="orbit-table" id="dd-table" role="grid" aria-label="Daily production detail">
+          <thead>
+            <tr>
+              <th class="col-num"   data-dd-sort="date"    aria-sort="none">Date</th>
+              <th class="col-associate" data-dd-sort="a"   aria-sort="none">Associate</th>
+              <th class="col-manager"   data-dd-sort="m"   aria-sort="none">Manager</th>
+              <th class="col-num"   data-dd-sort="act"     aria-sort="none">Actual</th>
+              <th class="col-num"   data-dd-sort="tgt"     aria-sort="none">Target</th>
+              <th class="col-num"   data-dd-sort="variance" aria-sort="none">Variance</th>
+              <th class="col-num"   data-dd-sort="w"       aria-sort="none">Week</th>
+              <th class="col-num"   data-dd-sort="ym"      aria-sort="none">Month</th>
+            </tr>
+          </thead>
+          <tbody id="dd-tbody">
+            <!-- Built by orbit-app.js DD.render() -->
+          </tbody>
+        </table>
+      </div>
+    </div><!-- /.orbit-dd-card -->
+
+  </div><!-- /.orbit-page#page-daily -->
+
+  <!-- ══ PAGE: Monthly Performance ════════════════════════════ -->
+  <div id="page-monthly" class="orbit-page is-hidden" role="tabpanel" aria-labelledby="tab-monthly">
+
+    <!-- Monthly filters -->
+    <div class="orbit-dd-filters mp-filters">
+
+      <div class="orbit-filters__group">
+        <span class="orbit-filters__label">Timeline</span>
+        <div class="orbit-filters__pills" id="mp-month-pills" role="group" aria-label="Filter by month"></div>
+      </div>
+
+      <div class="orbit-filters__group">
+        <span class="orbit-filters__label">Manager</span>
+        <div class="orbit-filters__select-wrap">
+          <select class="orbit-select" id="mp-manager-select" aria-label="Filter by manager">
+            <option value="all">All Managers</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="orbit-filters__group">
+        <span class="orbit-filters__label">Associate</span>
+        <div class="orbit-filters__select-wrap">
+          <select class="orbit-select" id="mp-assoc-select" aria-label="Filter by associate">
+            <option value="all">All Associates</option>
+          </select>
+        </div>
+      </div>
+
+    </div><!-- /.mp-filters -->
+
+    <!-- ── Summary KPI cards ───────────────────────────────── -->
+    <section class="orbit-kpis mp-kpis" aria-label="Monthly performance summary">
+
+      <article class="kpi-card kpi-card--mp-pass"
+               data-tt-title="Associates Passing" data-tt-body="Associates whose productivity is at or above the 100% target.<br><br>PASS: Productivity ≥ 100%">
+        <div class="kpi-label">Associates Passing</div>
+        <div class="kpi-value" id="mp-kpi-passing">—</div>
+        <div class="kpi-sub" id="mp-kpi-passing-sub">Productivity &ge; 100%</div>
+      </article>
+
+      <article class="kpi-card kpi-card--mp-fail"
+               data-tt-title="Associates Failing" data-tt-body="Associates whose productivity is below the 100% target.<br><br>FAIL: Productivity &lt; 100%">
+        <div class="kpi-label">Associates Failing</div>
+        <div class="kpi-value" id="mp-kpi-failing">—</div>
+        <div class="kpi-sub" id="mp-kpi-failing-sub">Productivity &lt; 100%</div>
+      </article>
+
+      <article class="kpi-card kpi-card--pct"
+               data-tt-title="Avg Productivity %" data-tt-body="Mean productivity percentage across all filtered associates and months.<br><br>PASS: ≥ 100% &nbsp;|&nbsp; FAIL: &lt; 100%">
+        <div class="kpi-label">Avg Productivity %</div>
+        <div class="kpi-value" id="mp-kpi-avg-prod">—</div>
+        <div class="kpi-sub" id="mp-kpi-avg-prod-sub">vs 100% target</div>
+      </article>
+
+      <article class="kpi-card kpi-card--qa-score"
+               data-tt-title="Avg QA Score %" data-tt-body="Weighted average QA score across the selected period.<br><br>PASS: ≥ 98.50% &nbsp;|&nbsp; FAIL: &lt; 98.50%">
+        <div class="kpi-label">Avg QA Score %</div>
+        <div class="kpi-value" id="mp-kpi-avg-qa">—</div>
+        <div class="kpi-sub" id="mp-kpi-avg-qa-sub">Threshold: 98.50%</div>
+      </article>
+
+      <article class="kpi-card kpi-card--mp-qa-pass"
+               data-tt-title="QA Pass Count" data-tt-body="Associates whose QA score meets the PI passing threshold.<br><br>PASS: QA Score ≥ 98.50%">
+        <div class="kpi-label">QA Pass Count</div>
+        <div class="kpi-value" id="mp-kpi-qa-pass">—</div>
+        <div class="kpi-sub">QA Score &ge; 98.50%</div>
+      </article>
+
+      <article class="kpi-card kpi-card--mp-qa-fail"
+               data-tt-title="QA Fail Count" data-tt-body="Associates whose QA score falls below the PI passing threshold.<br><br>FAIL: QA Score &lt; 98.50%">
+        <div class="kpi-label">QA Fail Count</div>
+        <div class="kpi-value" id="mp-kpi-qa-fail">—</div>
+        <div class="kpi-sub">QA Score &lt; 98.50%</div>
+      </article>
+
+    </section><!-- /.mp-kpis -->
+
+    <!-- ── Monthly trend charts ─────────────────────────────── -->
+    <div class="mp-charts">
+
+      <!-- Chart 1: Productivity Trend -->
+      <div class="chart-card mp-chart-card">
+        <div class="chart-card__header">
+          <div class="chart-card__title">Monthly Productivity Trend</div>
+          <div class="chart-card__legend">
+            <span class="chart-legend-item chart-legend-item--pass">&#9632; Pass (&ge;100%)</span>
+            <span class="chart-legend-item chart-legend-item--fail">&#9632; Fail (&lt;100%)</span>
+          </div>
+        </div>
+        <div class="chart-card__body">
+          <canvas id="mp-chart-prod" aria-label="Monthly productivity trend chart"></canvas>
+        </div>
+      </div>
+
+      <!-- Chart 2: QA Score Trend -->
+      <div class="chart-card mp-chart-card">
+        <div class="chart-card__header">
+          <div class="chart-card__title">Monthly QA Score Trend</div>
+          <div class="chart-card__legend">
+            <span class="chart-legend-item chart-legend-item--pass">&#9632; Pass (&ge;98.5%)</span>
+            <span class="chart-legend-item chart-legend-item--fail">&#9632; Fail (&lt;98.5%)</span>
+          </div>
+        </div>
+        <div class="chart-card__body">
+          <canvas id="mp-chart-qa" aria-label="Monthly QA score trend chart"></canvas>
+        </div>
+      </div>
+
+      <!-- Chart 3: Pass/Fail Distribution -->
+      <div class="chart-card mp-chart-card mp-chart-card--dist">
+        <div class="chart-card__header">
+          <div class="chart-card__title">Pass / Fail Distribution</div>
+        </div>
+        <div class="chart-card__body mp-dist-body">
+          <canvas id="mp-chart-dist" aria-label="Pass/fail distribution chart"></canvas>
+        </div>
+      </div>
+
+    </div><!-- /.mp-charts -->
+
+    <!-- ── Associate Performance Grid ──────────────────────── -->
+    <div class="table-card mp-grid-card">
+      <div class="table-card__header">
+        <div class="table-card__title">Associate Performance Grid</div>
+        <div class="table-card__meta" id="mp-grid-meta">Loading&hellip;</div>
+        <div class="table-card__actions">
+          <div class="mp-legend-inline">
+            <span class="qa-badge qa-badge--pass">● PROD PASS</span>
+            <span class="qa-badge qa-badge--fail">● PROD FAIL</span>
+            <span class="mp-qa-pass-badge">&#9670; QA PASS</span>
+            <span class="mp-qa-fail-badge">&#9670; QA FAIL</span>
+          </div>
+        </div>
+      </div>
+      <div class="table-card__body mp-grid-scroll">
+        <table class="orbit-table mp-grid-table" id="mp-grid-table" role="grid"
+               aria-label="Associate monthly performance grid">
+          <thead id="mp-grid-thead">
+            <!-- Built dynamically: Associate | Manager | [month cols…] -->
+          </thead>
+          <tbody id="mp-grid-tbody">
+            <!-- Built dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </div><!-- /.mp-grid-card -->
+
+    <!-- ── Monthly Detail trend table ──────────────────────── -->
+    <div class="table-card mp-detail-card">
+      <div class="table-card__header">
+        <div class="table-card__title">Monthly Performance Trend</div>
+        <div class="table-card__meta" id="mp-detail-meta"></div>
+        <div class="table-card__actions">
+          <button class="orbit-btn orbit-btn--ghost" id="mp-export-btn"
+                  title="Export to CSV" aria-label="Export monthly detail to CSV">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M8 1v9M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M2 12h12v2a1 1 0 01-1 1H3a1 1 0 01-1-1v-2z" fill="currentColor" opacity=".35"/>
+            </svg>
+            Export CSV
+          </button>
+        </div>
+      </div>
+      <div class="table-card__body">
+        <table class="orbit-table" id="mp-detail-table" role="grid"
+               aria-label="Monthly performance detail table">
+          <thead>
+            <tr>
+              <th data-mp-sort="ym"      class="col-num">Month</th>
+              <th data-mp-sort="a"       class="col-associate">Associate</th>
+              <th data-mp-sort="m"       class="col-manager">Manager</th>
+              <th data-mp-sort="act"     class="col-num">Actual</th>
+              <th data-mp-sort="tgt"     class="col-num">Target</th>
+              <th data-mp-sort="prodPct" class="col-num">Prod %</th>
+              <th data-mp-sort="avgQA"   class="col-num">QA Score</th>
+              <th class="col-num">Prod Status</th>
+              <th class="col-num">QA Status</th>
+            </tr>
+          </thead>
+          <tbody id="mp-detail-tbody">
+            <!-- Built dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </div><!-- /.mp-detail-card -->
+
+  </div><!-- /.orbit-page#page-monthly -->
+
+  <!-- ══════════════════════════════════════════════════════════
+       ORBIT FOOTER — Organizational Brand Hierarchy
+       CDC → Payment Integrity IGNITE → PROJECT ORBIT → Carelon
+       ══════════════════════════════════════════════════════════ -->
+  <footer class="orbit-footer" role="contentinfo" aria-label="Organizational branding">
+
+    <!-- Gradient divider line above footer -->
+    <div class="orbit-footer__divider" aria-hidden="true"></div>
+
+    <!-- Three-column logo row -->
+    <div class="orbit-footer__logos">
+
+      <!-- LEFT: Payment Integrity — official PNG asset -->
+      <div class="orbit-footer__brand orbit-footer__brand--left">
+        <img src="assets/logos/pi.png"
+             alt="Payment Integrity"
+             class="orbit-footer__logo-img orbit-footer__pi-img" />
+      </div>
+
+      <!-- CENTER: Payment Integrity IGNITE — official PNG asset -->
+      <div class="orbit-footer__brand orbit-footer__brand--center">
+        <img src="assets/logos/ignite.png"
+             alt="Payment Integrity IGNITE"
+             class="orbit-footer__logo-img orbit-footer__ignite-img" />
+      </div>
+
+      <!-- RIGHT: Carelon Global Solutions — official PNG asset -->
+      <div class="orbit-footer__brand orbit-footer__brand--right">
+        <img src="assets/logos/carelon.png"
+             alt="Carelon Global Solutions"
+             class="orbit-footer__logo-img orbit-footer__carelon-img" />
+      </div>
+
+    </div><!-- /.orbit-footer__logos -->
+
+    <!-- Tagline / attribution text -->
+    <div class="orbit-footer__tagline">
+      <span class="orbit-footer__tagline-title">PROJECT ORBIT</span>
+      <span class="orbit-footer__tagline-sep" aria-hidden="true">&nbsp;&mdash;&nbsp;</span>
+      <span class="orbit-footer__tagline-sub">Operational Results &amp; Business Intelligence Tracker</span>
+    </div>
+    <div class="orbit-footer__threshold">
+      QA Passing Threshold: <strong>98.50%</strong> &nbsp;&mdash;&nbsp; Payment Integrity Standard
+    </div>
+    <div class="orbit-footer__attr">
+      A Payment Integrity initiative &nbsp;&bull;&nbsp; powered by Carelon Global Solutions
+    </div>
+
+  </footer>
+
+  </main><!-- /.orbit-content -->
+</div><!-- /.orbit-shell -->
+
+<!-- Data source — extracted from PI DI Dashboard.xlsx -->
+<script src="orbit-data.js"></script>
+<!-- Application logic -->
+<script src="orbit-app.js"></script>
+
+</body>
+</html>
